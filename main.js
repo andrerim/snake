@@ -31,15 +31,13 @@ ctx.fillRect(
   snake.snakeHeight
 );
 
-setInterval(() => {
+
+var refreshIntervalId = setInterval(() => {
   ctx.clearRect(0, 0, canv.width, canv.height);
   ctx.fillStyle = "green";
   ctx.fillRect(fruit.posX, fruit.posY, fruit.width, fruit.height);
 
   ctx.fillStyle = "red";
-  snake.headPosX += snake.dirX;
-  snake.headPosY += snake.dirY;
-
   ctx.fillRect(
     snake.headPosX,
     snake.headPosY,
@@ -57,25 +55,50 @@ setInterval(() => {
     );
   };
 
+
+
   if (snake.headPosX == fruit.posX && snake.headPosY == fruit.posY) {
-    snake.body.push([snake.headPosX, snake.headPosY]);
+    if (snake.body.length == 0) {
+      snake.body.push([snake.headPosX, snake.headPosY]);
+    } else {
+      snake.body.push([snake.body[-1]]);
+    }
 
-    fruit.posX = Math.floor((Math.random() * canv.width) / 10) * 10;
-    fruit.posY = Math.floor((Math.random() * canv.height) / 10) * 10;
-
+    fruit.posX = Math.floor((Math.random() * canv.width) / gridSize) * gridSize;
+    fruit.posY = Math.floor((Math.random() * canv.height) / gridSize) * gridSize;
     console.log(snake.body);
-  };
+  }
 
   if (snake.body.length > 0) {
-      snake.body.pop();
-    for (let i = 0; i <= snake.body.length-1; i++) {
-        console.log(i)
-      snake.body[i] = snake.body[i+1];
-    };
+    snake.body.unshift([snake.headPosX, snake.headPosY]);
+    snake.body.pop();
   };
+
+  snake.headPosX += snake.dirX;
+  snake.headPosY += snake.dirY;
+
+  const gameOver = () => {
+    ctx.font = "34px Arial"
+    ctx.fillStyle = "orange";
+    ctx.fillText("Game over! Score: " + snake.body.length * 10, 50, 200);
+    clearInterval(refreshIntervalId);
+  }
+
+  if (snake.headPosX == canv.width || snake.headPosX == -gridSize || snake.headPosY == canv.height || snake.headPosY == -gridSize) {
+    gameOver();
+  }
+
+  for (let i = 0; i < snake.body.length; i++) {
+    if (snake.headPosX == snake.body[i][0] && snake.headPosY == snake.body[i][1]) {
+      gameOver();
+    }
+  };
+
+
+
 }, 1000 / gameSpeed);
 
-document.onkeydown = function(event) {
+document.onkeydown = function (event) {
   var keyCode;
   if (event == null) {
     keyCode = window.event.keyCode;
@@ -105,6 +128,7 @@ document.onkeydown = function(event) {
       snake.dirX = 0;
       snake.dirY = gridSize;
       break;
+      
     default:
       break;
   }
