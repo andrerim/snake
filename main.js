@@ -31,12 +31,17 @@ ctx.fillRect(
   snake.snakeHeight
 );
 
-
+// render canvas in a certain inteval 
 var refreshIntervalId = setInterval(() => {
+
+  // clear canvas
   ctx.clearRect(0, 0, canv.width, canv.height);
+
+  // draw fruit
   ctx.fillStyle = "green";
   ctx.fillRect(fruit.posX, fruit.posY, fruit.width, fruit.height);
 
+  // draw snake
   ctx.fillStyle = "red";
   ctx.fillRect(
     snake.headPosX,
@@ -44,7 +49,8 @@ var refreshIntervalId = setInterval(() => {
     snake.snakeWidth,
     snake.snakeHeight
   );
-
+ 
+  // draw body
   for (let i = 0; i < snake.body.length; i++) {
     ctx.fillStyle = "blue";
     ctx.fillRect(
@@ -55,20 +61,22 @@ var refreshIntervalId = setInterval(() => {
     );
   };
 
-
-
+  // check for collision with fruit
   if (snake.headPosX == fruit.posX && snake.headPosY == fruit.posY) {
+    // if body size is 0, extend body with cords equal to the snakes head
     if (snake.body.length == 0) {
       snake.body.push([snake.headPosX, snake.headPosY]);
+    // extend the end of the body with coords equal to the last part of the body 
     } else {
       snake.body.push([snake.body[-1]]);
     }
 
+    // add new fruit
     fruit.posX = Math.floor((Math.random() * canv.width) / gridSize) * gridSize;
     fruit.posY = Math.floor((Math.random() * canv.height) / gridSize) * gridSize;
-    console.log(snake.body);
   }
 
+  // calculate position of snake for next frame
   if (snake.body.length > 0) {
     snake.body.unshift([snake.headPosX, snake.headPosY]);
     snake.body.pop();
@@ -80,21 +88,20 @@ var refreshIntervalId = setInterval(() => {
   const gameOver = () => {
     ctx.font = "34px Arial"
     ctx.fillStyle = "orange";
-    ctx.fillText("Game over! Score: " + snake.body.length * 10, 50, 200);
+    ctx.fillText("Game over! Score: " + snake.body.length * 10, canv.width/2 - 34*5, canv.height/2);
     clearInterval(refreshIntervalId);
   }
 
+  // checks for collision with borders
   if (snake.headPosX == canv.width || snake.headPosX == -gridSize || snake.headPosY == canv.height || snake.headPosY == -gridSize) {
     gameOver();
   }
-
+  // checks for collision with body
   for (let i = 0; i < snake.body.length; i++) {
     if (snake.headPosX == snake.body[i][0] && snake.headPosY == snake.body[i][1]) {
       gameOver();
     }
   };
-
-
 
 }, 1000 / gameSpeed);
 
@@ -107,16 +114,19 @@ document.onkeydown = function (event) {
   }
 
   switch (keyCode) {
+
     // left
     case 37:
       snake.dirX = -gridSize;
       snake.dirY = 0;
       break;
+
     // up
     case 38:
       snake.dirX = 0;
       snake.dirY = -gridSize;
       break;
+
     // right
     case 39:
       snake.dirX = gridSize;
@@ -128,7 +138,7 @@ document.onkeydown = function (event) {
       snake.dirX = 0;
       snake.dirY = gridSize;
       break;
-      
+
     default:
       break;
   }
