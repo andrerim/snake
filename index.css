@@ -18,3 +18,8 @@ body {
 canvas {
     border: 2px solid purple;
 }
+
+p {
+    color: red;
+    font-size: 150%;
+}

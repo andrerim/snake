@@ -1,7 +1,9 @@
-var canv = document.getElementById("snake");
-var ctx = canv.getContext("2d");
-var gridSize = 10;
-var gameSpeed = 10;
+const canv = document.getElementById("snake");
+const ctx = canv.getContext("2d");
+const gridSize = 10;
+const gameSpeed = 10; // frames per second
+var score = 0; 
+const displayScore = document.getElementById("score");
 
 var fruit = {
   posX: Math.floor((Math.random() * canv.width) / 10) * 10,
@@ -66,10 +68,13 @@ var refreshIntervalId = setInterval(() => {
     // if body size is 0, extend body with cords equal to the snakes head
     if (snake.body.length == 0) {
       snake.body.push([snake.headPosX, snake.headPosY]);
-    // extend the end of the body with coords equal to the last part of the body 
+      // extend the end of the body with coords equal to the last part of the body 
     } else {
       snake.body.push([snake.body[-1]]);
     }
+
+    score =  snake.body.length * 10;
+    displayScore.innerHTML = score;
 
     // add new fruit
     fruit.posX = Math.floor((Math.random() * canv.width) / gridSize) * gridSize;
@@ -87,8 +92,8 @@ var refreshIntervalId = setInterval(() => {
 
   const gameOver = () => {
     ctx.font = "34px Arial"
-    ctx.fillStyle = "orange";
-    ctx.fillText("Game over! Score: " + snake.body.length * 10, canv.width/2 - 34*5, canv.height/2);
+    ctx.fillStyle = "red";
+    ctx.fillText("Game over! Score: " + score, canv.width/2 - 34*5, canv.height/2);
     clearInterval(refreshIntervalId);
   }
 
